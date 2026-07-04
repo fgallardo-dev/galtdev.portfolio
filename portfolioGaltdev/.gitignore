@@ -30,3 +30,6 @@ AGENTS.md
 
 # disabled nested repo backup (safe to delete later)
 .git.disabled/
+
+# personal photo — never committed; re-add manually when deploying
+src/assets/portrait.png

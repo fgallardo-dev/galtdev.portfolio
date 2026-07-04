@@ -1,0 +1,341 @@
+---
+import { Image } from 'astro:assets';
+import { useTranslations } from '../i18n/translations';
+import type { Lang } from '../i18n/translations';
+import portrait from '../assets/portrait.png';
+import koalaIcon from '../assets/koala-icon.png';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section class="px-6 py-16">
+
+  <header class="text-center mb-12">
+    <h1 class="font-display text-4xl md:text-5xl font-medium">
+      {t.about.title}
+    </h1>
+  </header>
+
+  <!-- Escena: retrato en arco + anotaciones orbitando -->
+  <div class="scene relative mx-auto">
+
+    <figure class="m-0">
+      <div class="arch">
+        <Image
+          src={portrait}
+          alt={t.about.portraitAlt}
+          width={640}
+          loading="eager"
+          class="portrait-img"
+          draggable="false"
+        />
+      </div>
+    </figure>
+
+    <ul class="notes font-mono">
+      <li class="note note--role text-accent">
+        {t.about.notes.role}
+        <svg class="arrow" width="46" height="20" viewBox="0 0 46 20" fill="none" aria-hidden="true">
+          <path d="M2 16 C 14 4, 28 4, 41 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          <path d="M41 10l-7 -4 M41 10l-8 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </li>
+      <li class="note note--age">
+        <svg class="arrow" width="36" height="30" viewBox="0 0 36 30" fill="none" aria-hidden="true">
+          <path d="M33 3 8 26" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          <path d="M8 26l9-1M8 26l3-8.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+        {t.about.notes.age}
+      </li>
+      <li class="note note--future">
+        {t.about.notes.future}
+        <svg class="arrow" width="46" height="20" viewBox="0 0 46 20" fill="none" aria-hidden="true">
+          <path d="M2 16 C 14 4, 28 4, 41 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          <path d="M41 10l-7 -4 M41 10l-8 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </li>
+      <li class="note note--koala">
+        <svg class="arrow" width="46" height="20" viewBox="0 0 46 20" fill="none" aria-hidden="true">
+          <path d="M2 16 C 14 4, 28 4, 41 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          <path d="M41 10l-7 -4 M41 10l-8 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+        <Image src={koalaIcon} alt="" width={30} class="kobi-mini" draggable="false" />
+        {t.about.notes.koala}
+      </li>
+      <li class="note note--coffee">
+        <svg class="doodle" width="20" height="19" viewBox="0 0 20 19" fill="none" aria-hidden="true">
+          <path d="M3 7h11v5.5A3.5 3.5 0 0 1 10.5 16h-4A3.5 3.5 0 0 1 3 12.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+          <path d="M14 8h1.5a2.5 2.5 0 0 1 0 5H14" stroke="currentColor" stroke-width="1.8" />
+          <path d="M6.5 4c0-1 .8-1 .8-2M10 4c0-1 .8-1 .8-2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+        </svg>
+        {t.about.notes.coffee}
+        <svg class="arrow" width="46" height="20" viewBox="0 0 46 20" fill="none" aria-hidden="true">
+          <path d="M2 16 C 14 4, 28 4, 41 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          <path d="M41 10l-7 -4 M41 10l-8 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </li>
+      <li class="note note--quality">
+        <svg class="arrow" width="46" height="20" viewBox="0 0 46 20" fill="none" aria-hidden="true">
+          <path d="M2 16 C 14 4, 28 4, 41 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          <path d="M41 10l-7 -4 M41 10l-8 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+        <svg class="doodle star-doodle" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 0c.6 6.4 5 10.8 12 11.4C17 12 12.6 16.4 12 24c-.6-7.6-5-12-12-12.6C7 11 11.4 6.6 12 0z" />
+        </svg>
+        {t.about.notes.quality}
+      </li>
+    </ul>
+
+  </div>
+
+  <!-- Remate: la propuesta de valor -->
+  <p class="mission font-display font-medium text-brand-dark">
+    {t.about.mission}
+  </p>
+
+  <!-- Acordeones: profundidad para quien quiera saber más -->
+  <div class="qa-grid mx-auto grid gap-10 md:grid-cols-2">
+
+    <div>
+      <h2 class="qa-title font-mono text-xs tracking-widest text-accent">
+        / {t.about.recruiterTitle} /
+      </h2>
+      {t.about.recruiterQA.map((item) => (
+        <details class="qa">
+          <summary class="font-sans">{item.q}</summary>
+          <p>{item.a}</p>
+        </details>
+      ))}
+    </div>
+
+    <div>
+      <h2 class="qa-title font-mono text-xs tracking-widest text-accent">
+        / {t.about.faqTitle} /
+      </h2>
+      {t.about.personalQA.map((item) => (
+        <details class="qa">
+          <summary class="font-sans">{item.q}</summary>
+          <p>{item.a}</p>
+        </details>
+      ))}
+    </div>
+
+  </div>
+
+</section>
+
+<style>
+  .scene {
+    max-width: 900px;
+  }
+
+  /* Arco editorial: doble marco con outline desplazado */
+  .arch {
+    width: min(320px, 78vw);
+    aspect-ratio: 3 / 4;
+    margin-inline: auto;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 999px 999px 30px 30px;
+    background: linear-gradient(180deg, #f3e2cd, #ebd6c1);
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    outline: 1.5px solid rgba(92, 63, 33, 0.25);
+    outline-offset: 8px;
+    box-shadow: 0 18px 40px rgba(92, 63, 33, 0.16);
+    user-select: none;
+  }
+
+  /* Sticker: contorno claro alrededor de la silueta + sin interacción directa */
+  .portrait-img {
+    width: 92%;
+    height: auto;
+    pointer-events: none;
+    -webkit-user-drag: none;
+    filter:
+      drop-shadow(0 2px 0 rgba(255, 255, 255, 0.9))
+      drop-shadow(0 -2px 0 rgba(255, 255, 255, 0.9))
+      drop-shadow(2px 0 0 rgba(255, 255, 255, 0.9))
+      drop-shadow(-2px 0 0 rgba(255, 255, 255, 0.9))
+      drop-shadow(0 12px 18px rgba(92, 63, 33, 0.22));
+  }
+
+  /* Base (móvil): las anotaciones fluyen como chips bajo la foto */
+  .notes {
+    margin-top: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--color-brand-mid);
+  }
+
+  .note {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+  }
+
+  .doodle {
+    color: var(--color-accent);
+    flex-shrink: 0;
+  }
+
+  /* Flechas: ocultas en móvil (en los chips no apuntan a nada) */
+  .arrow {
+    display: none;
+    color: var(--color-accent);
+  }
+
+  .kobi-mini {
+    width: 30px;
+    height: auto;
+    -webkit-user-drag: none;
+  }
+
+  /* Escritorio: las anotaciones orbitan alrededor del arco */
+  @media (min-width: 900px) {
+    .scene {
+      min-height: 600px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .notes {
+      margin: 0;
+    }
+
+    .note {
+      position: absolute;
+      background: transparent;
+      border: none;
+      padding: 0;
+      animation: note-float 6s ease-in-out infinite;
+      transition: scale 0.2s ease, color 0.2s ease;
+    }
+
+    /* Al posarse el ratón: la anotación se destaca y deja de flotar */
+    .note:hover {
+      scale: 1.12;
+      color: var(--color-brand-dark);
+      animation-play-state: paused;
+    }
+
+    /* Cada flecha SALE de su palabra hacia el arco, con ángulo geométrico real */
+    .arrow {
+      display: block;
+      position: absolute;
+    }
+
+    .note--role .arrow    { right: -52px; bottom: -20px; transform: rotate(32deg); }
+    .note--age .arrow     { left: -34px; top: 20px; }
+    .note--future .arrow  { right: -54px; top: 50%; margin-top: -12px; transform: rotate(6deg); }
+    .note--koala .arrow   { left: -54px;  top: 50%; margin-top: -12px; transform: scaleX(-1) rotate(6deg); }
+    .note--coffee .arrow  { right: -52px; top: -18px; transform: rotate(-28deg); }
+    .note--quality .arrow { left: -52px;  top: -16px; transform: scaleX(-1) rotate(-28deg); }
+
+    .note--role    { top: 6%;  left: 7%; }
+    .note--age     { top: 10%; right: 24%; animation-delay: 0.9s; }
+    .note--future  { top: 42%; left: 0; max-width: 160px; display: block; text-align: right; animation-delay: 1.8s; }
+    .note--koala   { top: 40%; right: 5%; animation-delay: 2.7s; }
+    .note--coffee  { bottom: 16%; left: 10%; animation-delay: 3.6s; }
+    .note--quality { bottom: 6%; right: 0; max-width: 210px; animation-delay: 4.5s; }
+  }
+
+  @keyframes note-float {
+    0%, 100% { translate: 0 0; }
+    50%      { translate: 0 -7px; }
+  }
+
+  /* Respeto por quien pide menos movimiento en su sistema */
+  @media (prefers-reduced-motion: reduce) {
+    .note {
+      animation: none;
+    }
+  }
+
+  .mission {
+    max-width: 640px;
+    margin: 44px auto 0;
+    text-align: center;
+    font-size: clamp(22px, 3vw, 30px);
+    line-height: 1.35;
+  }
+
+  .qa-grid {
+    max-width: 900px;
+    margin-top: 56px;
+  }
+
+  .qa-title {
+    margin-bottom: 14px;
+  }
+
+  .qa {
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(92, 63, 33, 0.08);
+    box-shadow: 0 8px 18px rgba(92, 63, 33, 0.06);
+    padding: 0 18px;
+    margin-bottom: 10px;
+  }
+
+  .qa summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    min-height: 58px;
+    padding: 8px 0;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1.35;
+    color: var(--color-brand-dark);
+  }
+
+  .qa summary::-webkit-details-marker {
+    display: none;
+  }
+
+  /* Indicador +/× dirigido por el estado open del details */
+  .qa summary::after {
+    content: '+';
+    font-family: var(--font-mono);
+    font-size: 18px;
+    color: var(--color-accent);
+    transition: transform 0.2s ease;
+  }
+
+  .qa[open] summary::after {
+    transform: rotate(45deg);
+  }
+
+  .qa p {
+    padding: 0 0 16px;
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--color-brand-mid);
+  }
+</style>
+
+<script>
+  const scene = document.querySelector('.scene');
+  scene?.addEventListener('contextmenu', (e) => e.preventDefault());
+</script>
