@@ -13,15 +13,17 @@ const path = Astro.url.pathname;
 
 const homeUrl = lang === 'es' ? '/' : '/en/';
 const aboutUrl = lang === 'es' ? '/sobre-mi/' : '/en/about/';
+const contactUrl = lang === 'es' ? '/contacto/' : '/en/contact/';
 
 const isAbout = path.startsWith('/sobre-mi') || path.startsWith('/en/about');
+const isContact = path.startsWith('/contacto') || path.startsWith('/en/contact');
 const isHome = path === '/' || path === '/en/' || path === '/en';
 
 // El switch de idioma lleva a la MISMA página en el otro idioma
 const langUrl =
   lang === 'es'
-    ? isAbout ? '/en/about/' : '/en/'
-    : isAbout ? '/sobre-mi/' : '/';
+    ? isAbout ? '/en/about/' : isContact ? '/en/contact/' : '/en/'
+    : isAbout ? '/sobre-mi/' : isContact ? '/contacto/' : '/';
 ---
 
 <nav class="relative flex items-center justify-between px-6 py-4" aria-label={t.nav.ariaLabel}>
@@ -57,7 +59,11 @@ const langUrl =
         >{t.nav.about}</a>
       </li>
       <li>
-        <a href={`${homeUrl}#contact`} class="nav-link">{t.nav.contact}</a>
+        <a
+          href={contactUrl}
+          class="nav-link"
+          aria-current={isContact ? 'page' : undefined}
+        >{t.nav.contact}</a>
       </li>
     </ul>
 

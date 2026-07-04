@@ -1,0 +1,21 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Nav from '../../components/Nav.astro';
+import Contact from '../../components/Contact.astro';
+import { useTranslations } from '../../i18n/translations';
+
+const t = useTranslations('en');
+---
+
+<Layout
+  title={`${t.contact.title} · galtyou.dev`}
+  description={t.contact.subtitle}
+  lang="en"
+  alternateEsPath="/contacto/"
+  alternateEnPath="/en/contact/"
+>
+  <Nav lang="en" />
+  <main>
+    <Contact lang="en" />
+  </main>
+</Layout>
