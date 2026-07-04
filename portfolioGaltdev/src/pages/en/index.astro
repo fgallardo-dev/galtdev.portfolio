@@ -1,0 +1,17 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Nav from '../../components/Nav.astro';
+import Hero from '../../components/Hero.astro';
+import Projects from '../../components/Projects.astro';
+import { useTranslations } from '../../i18n/translations';
+
+const t = useTranslations('en');
+---
+
+<Layout title={t.meta.title} description={t.meta.description} lang="en">
+  <Nav lang="en" />
+  <main>
+    <Hero lang="en" />
+    <Projects lang="en" />
+  </main>
+</Layout>
