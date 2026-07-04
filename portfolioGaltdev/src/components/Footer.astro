@@ -1,0 +1,92 @@
+---
+import { useTranslations } from '../i18n/translations';
+import type { Lang } from '../i18n/translations';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+// Sin la variable, el build falla a propósito: mejor que publicar enlaces rotos
+const email = import.meta.env.CONTACT_EMAIL as string | undefined;
+if (!email) {
+  throw new Error(
+    'CONTACT_EMAIL is not set. Create portfolioGaltdev/.env from .env.example.'
+  );
+}
+const homeUrl = lang === 'es' ? '/' : '/en/';
+
+// Se calcula en cada build: el año nunca queda viejo tras un deploy
+const year = new Date().getFullYear();
+---
+
+<footer class="footer px-6 pt-12 pb-8 text-center">
+
+  <a href={homeUrl} class="inline-flex items-center justify-center gap-2 no-underline">
+    <img
+      src="/logo.png"
+      alt=""
+      class="w-9 h-9 rounded-full bg-white p-0.5 object-contain"
+    />
+    <span class="font-mono font-bold text-brand-light">
+      galtyou<span class="text-accent">.dev</span>
+    </span>
+  </a>
+
+  <!-- La misión como firma: misma fuente de verdad que en Sobre mí -->
+  <p class="font-display text-xl mt-4 mb-7 opacity-90">
+    {t.about.mission}
+  </p>
+
+  <ul class="flex flex-wrap justify-center gap-3 font-mono text-xs">
+    <li>
+      <a class="flink" href="https://github.com/fgallardo-dev" target="_blank" rel="noopener noreferrer">
+        GitHub <span aria-hidden="true">↗</span>
+      </a>
+    </li>
+    <li>
+      <a class="flink" href="https://www.linkedin.com/in/gallardotech" target="_blank" rel="noopener noreferrer">
+        LinkedIn <span aria-hidden="true">↗</span>
+      </a>
+    </li>
+    <li>
+      <a class="flink" href={`mailto:${email}`}>Email</a>
+    </li>
+  </ul>
+
+  <p class="font-mono text-[11px] opacity-60 mt-8">
+    © {year} galtyou.dev · {t.footer.credit}
+    <a class="credit-link" href="https://icons8.com" target="_blank" rel="noopener noreferrer">Icons8</a>
+  </p>
+
+</footer>
+
+<style>
+  .footer {
+    margin-top: 64px;
+    background: var(--color-brand-dark);
+    color: var(--color-brand-light);
+    border-radius: 44px 44px 0 0;
+  }
+
+  .flink {
+    display: inline-block;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(246, 232, 215, 0.25);
+    color: var(--color-brand-light);
+    text-decoration: none;
+    transition: background 0.2s ease;
+  }
+
+  .flink:hover {
+    background: rgba(246, 232, 215, 0.12);
+  }
+
+  .credit-link {
+    color: inherit;
+    text-decoration: underline;
+  }
+</style>

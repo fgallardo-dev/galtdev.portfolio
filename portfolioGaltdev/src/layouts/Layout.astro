@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import Footer from '../components/Footer.astro';
 
 interface Props {
   title: string;
@@ -71,5 +72,6 @@ const ogImageURL = new URL(ogImage, Astro.site).href;
   </head>
   <body>
     <slot />
+    <Footer lang={lang} />
   </body>
 </html>
