@@ -1,0 +1,168 @@
+---
+import { useTranslations } from '../i18n/translations';
+import type { Lang } from '../i18n/translations';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const homeUrl = lang === 'es' ? '/' : '/en/';
+const langUrl = lang === 'es' ? '/en/' : '/';
+---
+
+<nav class="relative flex items-center justify-between px-6 py-4" aria-label={t.nav.ariaLabel}>
+
+  <!-- Logo + marca: vuelve al inicio del idioma actual -->
+  <a href={homeUrl} class="flex items-center gap-3 no-underline">
+    <img
+      src="/logo.png"
+      alt="galtyou.dev logo"
+      class="w-11 h-11 rounded-full bg-white p-0.5 object-contain"
+      style="box-shadow: 0 1px 4px rgba(92,63,33,.12);"
+    />
+    <span class="font-mono font-bold text-lg text-brand-dark">
+      galtyou<span class="text-accent">.dev</span>
+    </span>
+  </a>
+
+  <div class="flex items-center gap-2">
+    <!-- Enlaces de navegación: fila en escritorio, panel desplegable en móvil -->
+    <ul id="nav-menu" class="nav-menu">
+      <li>
+        <a href="#projects" class="nav-link" aria-current="true">{t.nav.projects}</a>
+      </li>
+      <li>
+        <a href="#about" class="nav-link">{t.nav.about}</a>
+      </li>
+      <li>
+        <a href="#contact" class="nav-link">{t.nav.contact}</a>
+      </li>
+    </ul>
+
+    <!-- El switch de idioma queda siempre visible, también en móvil -->
+    <a href={langUrl} class="nav-link nav-link--lang" aria-label={t.nav.langSwitchLabel}>
+      {t.nav.langSwitch}
+    </a>
+
+    <!-- Abrir/cerrar el menú es una ACCIÓN: por eso es un button -->
+    <button
+      class="nav-toggle"
+      aria-expanded="false"
+      aria-controls="nav-menu"
+      aria-label={t.nav.menuLabel}
+    >
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+      </svg>
+    </button>
+  </div>
+
+</nav>
+
+<style>
+  .nav-link {
+    display: inline-block;
+    padding: 9px 17px;
+    border-radius: 999px;
+    color: var(--color-brand-dark);
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .nav-link:hover {
+    background: rgba(92, 63, 33, 0.08);
+  }
+
+  /* El estado activo lo marca la semántica, no una clase visual */
+  .nav-link[aria-current='true'] {
+    background: var(--color-brand-dark);
+    color: var(--color-brand-light);
+  }
+
+  .nav-link--lang {
+    border: 1.5px solid rgba(92, 63, 33, 0.22);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 8px 11px;
+  }
+
+  /* Escritorio: enlaces en fila, sin botón de menú */
+  .nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .nav-toggle {
+    display: none;
+  }
+
+  /* Móvil: el menú se vuelve panel desplegable y aparece el botón */
+  @media (max-width: 767px) {
+    .nav-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      border: 1.5px solid rgba(92, 63, 33, 0.22);
+      background: transparent;
+      color: var(--color-brand-dark);
+      cursor: pointer;
+    }
+
+    .nav-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 24px;
+      right: 24px;
+      z-index: 10;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 4px;
+      padding: 12px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 12px 30px rgba(92, 63, 33, 0.18);
+    }
+
+    .nav-menu .nav-link {
+      display: block;
+      text-align: center;
+    }
+
+    /* El CSS reacciona al estado ARIA del botón: abierto = visible */
+    nav:has(.nav-toggle[aria-expanded='true']) .nav-menu {
+      display: flex;
+    }
+  }
+</style>
+
+<script>
+  // Primer script de cliente: abre y cierra el menú móvil.
+  // El único estado vive en aria-expanded; el CSS reacciona a él.
+  const toggle = document.querySelector<HTMLButtonElement>('.nav-toggle');
+  const links = document.querySelectorAll<HTMLAnchorElement>('.nav-menu a');
+
+  toggle?.addEventListener('click', () => {
+    const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!isOpen));
+  });
+
+  // Al elegir un destino, el panel se cierra solo
+  links.forEach((link) => {
+    link.addEventListener('click', () => {
+      toggle?.setAttribute('aria-expanded', 'false');
+    });
+  });
+</script>
