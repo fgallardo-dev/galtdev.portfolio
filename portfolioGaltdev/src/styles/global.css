@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+@theme {
+  /* --- Brand palette --- */
+  --color-brand-dark: #5C3F21;
+  --color-brand-mid: #8B5E34;
+  --color-brand-light: #F6E8D7;
+  --color-brand-pale: #EBD6C1;
+  --color-accent: #D9722C;
+  --color-accent-dark: #c0641f;
+  --color-teal: #4A90A4;
+  --color-teal-dark: #2E6B5E;
+  --color-teal-light: #6FA08E;
+
+  /* --- Typography --- */
+  --font-display: 'Bodoni Moda', serif;
+  --font-sans: 'Outfit', system-ui, sans-serif;
+  --font-mono: 'Space Mono', monospace;
+}
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-brand-light);
+    color: var(--color-brand-dark);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
