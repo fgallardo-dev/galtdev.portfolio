@@ -25,6 +25,7 @@ pnpm-debug.log*
 
 # AI assistant local files
 CLAUDE.md
+AGENTS.md
 .claude/
 
 # disabled nested repo backup (safe to delete later)
