@@ -25,18 +25,11 @@ export const translations = {
     },
     projects: {
       title: 'Proyectos',
-      search: 'Buscar proyecto…',
       allTech: 'Todas las tecnologías',
       empty: 'Sin proyectos con esa tecnología.',
-      available: 'disponible',
     },
     about: {
       title: 'Sobre mí',
-      bio: 'Desarrollo web full-stack centrado en producto. Construyo interfaces limpias y backends sólidos, con código mantenible y un poquito de cariño koala. Me muevo entre el front y el back sin perder de vista a la persona del otro lado de la pantalla.',
-      stack: 'STACK',
-      statsYears: 'años',
-      statsProjects: 'proyectos',
-      statsTechs: 'tecnologías',
       portraitAlt: 'Retrato de galtyou.dev',
       recruiterTitle: 'Posibles preguntas de un recruiter',
       faqTitle: 'Preguntas frecuentes sobre mí',
@@ -114,10 +107,6 @@ export const translations = {
       title: 'Hablemos',
       subtitle:
         '¿Tienes una idea o un proyecto en mente? Escríbeme y le damos forma juntos.',
-      name: 'Nombre',
-      email: 'Email',
-      message: 'Mensaje',
-      send: 'Enviar',
       sections: [
         {
           id: 'botiquin',
@@ -183,18 +172,11 @@ export const translations = {
     },
     projects: {
       title: 'Projects',
-      search: 'Search project…',
       allTech: 'All technologies',
       empty: 'No projects with that technology.',
-      available: 'available',
     },
     about: {
       title: 'About me',
-      bio: 'Product-minded full-stack web developer. I build clean interfaces and solid backends, with maintainable code and a bit of koala care. I move between front and back without losing sight of the person on the other side of the screen.',
-      stack: 'STACK',
-      statsYears: 'years',
-      statsProjects: 'projects',
-      statsTechs: 'technologies',
       portraitAlt: 'Portrait of galtyou.dev',
       recruiterTitle: 'Questions a recruiter might ask',
       faqTitle: 'Frequently asked questions about me',
@@ -272,10 +254,6 @@ export const translations = {
       title: "Let's talk",
       subtitle:
         'Got an idea or a project in mind? Drop me a line and we shape it together.',
-      name: 'Name',
-      email: 'Email',
-      message: 'Message',
-      send: 'Send',
       sections: [
         {
           id: 'botiquin',
