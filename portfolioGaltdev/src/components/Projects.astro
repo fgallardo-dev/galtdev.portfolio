@@ -1,0 +1,184 @@
+---
+import { useTranslations } from '../i18n/translations';
+import type { Lang } from '../i18n/translations';
+import { PROJECTS } from '../data/projects';
+import { TECHS } from '../data/techs';
+import type { TechId } from '../data/techs';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const techLabel = (id: TechId) =>
+  TECHS.find((tech) => tech.id === id)?.label ?? id;
+---
+
+<section id="projects" class="projects-section px-6 py-16">
+
+  <!-- Cabecera: título centrado, filtro a la derecha -->
+  <header class="projects-header relative mx-auto mb-10 text-center">
+    <h2 class="font-display text-4xl md:text-5xl font-medium">
+      {t.projects.title}
+    </h2>
+
+    <select id="tech-filter" class="filter font-mono text-xs" aria-label={t.techs.title}>
+      <option value="all">{t.projects.allTech}</option>
+      {TECHS.map((tech) => (
+        <option value={tech.id}>{tech.label}</option>
+      ))}
+    </select>
+  </header>
+
+  <!-- Grid de proyectos: una card por proyecto, columnas según el ancho disponible -->
+  <ul class="projects-grid mx-auto">
+    {PROJECTS.map((project) => (
+      <li data-techs={project.techs.join(' ')}>
+        <article class="card" style={`--card-accent: ${project.accent}`}>
+          <span class="card-chip" aria-hidden="true"></span>
+          <h3 class="font-sans font-bold text-lg text-brand-dark">
+            {project.name}
+          </h3>
+          <p class="text-sm text-brand-mid">
+            {project.description[lang]}
+          </p>
+          <ul class="flex flex-wrap gap-1.5 mt-auto">
+            {project.techs.map((techId) => (
+              <li class="tag font-mono text-xs">{techLabel(techId)}</li>
+            ))}
+          </ul>
+        </article>
+      </li>
+    ))}
+  </ul>
+
+  <!-- Estado vacío: se anuncia también a lectores de pantalla -->
+  <p
+    id="projects-empty"
+    class="projects-empty mx-auto font-mono text-sm text-brand-mid text-center"
+    aria-live="polite"
+    hidden
+  >
+    {t.projects.empty}
+  </p>
+
+</section>
+
+<style>
+  /* Banda blanca: la sección se despega del fondo beige de la página */
+  .projects-section {
+    background: #fffdf9;
+    border-radius: 44px 44px 0 0;
+    box-shadow: 0 -8px 24px rgba(92, 63, 33, 0.06);
+  }
+
+  .projects-header {
+    max-width: 1080px;
+  }
+
+  .filter {
+    appearance: none;
+    padding: 12px 44px 12px 20px;
+    border-radius: 999px;
+    border: none;
+    background-color: var(--color-brand-dark);
+    color: var(--color-brand-light);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(92, 63, 33, 0.25);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23F6E8D7' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .filter:hover {
+    box-shadow: 0 10px 24px rgba(92, 63, 33, 0.3);
+  }
+
+  /* Móvil: el filtro baja centrado bajo el título */
+  .filter {
+    margin-top: 20px;
+  }
+
+  /* Escritorio: título en el centro exacto, filtro anclado a la derecha */
+  @media (min-width: 768px) {
+    .filter {
+      margin-top: 0;
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+
+  .projects-grid {
+    max-width: 1080px;
+    display: grid;
+    /* Columnas automáticas: cada una de al menos 280px, las que entren */
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .projects-empty {
+    max-width: 1080px;
+    padding-top: 24px;
+  }
+
+  .card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 24px;
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(92, 63, 33, 0.08);
+    box-shadow: 0 10px 24px rgba(92, 63, 33, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 32px rgba(92, 63, 33, 0.16);
+  }
+
+  /* La marca de color de cada proyecto llega por --card-accent */
+  .card-chip {
+    width: 34px;
+    height: 5px;
+    border-radius: 999px;
+    background: var(--card-accent);
+  }
+
+  .tag {
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--card-accent) 14%, transparent);
+    color: var(--color-brand-dark);
+  }
+</style>
+
+<script>
+  // Filtro de proyectos por tecnología: muestra solo las cards que la usan.
+  const filter = document.querySelector<HTMLSelectElement>('#tech-filter');
+  const cards = document.querySelectorAll<HTMLLIElement>('.projects-grid > li');
+  const empty = document.querySelector<HTMLParagraphElement>('#projects-empty');
+
+  filter?.addEventListener('change', () => {
+    const tech = filter.value;
+    let visible = 0;
+
+    cards.forEach((card) => {
+      const show =
+        tech === 'all' || (card.dataset.techs ?? '').split(' ').includes(tech);
+      card.hidden = !show;
+      if (show) visible += 1;
+    });
+
+    if (empty) empty.hidden = visible > 0;
+  });
+</script>
