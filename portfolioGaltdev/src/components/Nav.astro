@@ -15,8 +15,8 @@ const homeUrl = lang === 'es' ? '/' : '/en/';
 const aboutUrl = lang === 'es' ? '/sobre-mi/' : '/en/about/';
 const contactUrl = lang === 'es' ? '/contacto/' : '/en/contact/';
 
-const isAbout = path.startsWith('/sobre-mi') || path.startsWith('/en/about');
-const isContact = path.startsWith('/contacto') || path.startsWith('/en/contact');
+const isAbout = ['/sobre-mi', '/sobre-mi/', '/en/about', '/en/about/'].includes(path);
+const isContact = ['/contacto', '/contacto/', '/en/contact', '/en/contact/'].includes(path);
 const isHome = path === '/' || path === '/en/' || path === '/en';
 
 // El switch de idioma lleva a la MISMA página en el otro idioma
