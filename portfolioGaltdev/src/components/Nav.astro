@@ -9,8 +9,19 @@ interface Props {
 const { lang } = Astro.props;
 const t = useTranslations(lang);
 
+const path = Astro.url.pathname;
+
 const homeUrl = lang === 'es' ? '/' : '/en/';
-const langUrl = lang === 'es' ? '/en/' : '/';
+const aboutUrl = lang === 'es' ? '/sobre-mi/' : '/en/about/';
+
+const isAbout = path.startsWith('/sobre-mi') || path.startsWith('/en/about');
+const isHome = path === '/' || path === '/en/' || path === '/en';
+
+// El switch de idioma lleva a la MISMA página en el otro idioma
+const langUrl =
+  lang === 'es'
+    ? isAbout ? '/en/about/' : '/en/'
+    : isAbout ? '/sobre-mi/' : '/';
 ---
 
 <nav class="relative flex items-center justify-between px-6 py-4" aria-label={t.nav.ariaLabel}>
@@ -32,13 +43,21 @@ const langUrl = lang === 'es' ? '/en/' : '/';
     <!-- Enlaces de navegación: fila en escritorio, panel desplegable en móvil -->
     <ul id="nav-menu" class="nav-menu">
       <li>
-        <a href="#projects" class="nav-link" aria-current="true">{t.nav.projects}</a>
+        <a
+          href={`${homeUrl}#projects`}
+          class="nav-link"
+          aria-current={isHome ? 'page' : undefined}
+        >{t.nav.projects}</a>
       </li>
       <li>
-        <a href="#about" class="nav-link">{t.nav.about}</a>
+        <a
+          href={aboutUrl}
+          class="nav-link"
+          aria-current={isAbout ? 'page' : undefined}
+        >{t.nav.about}</a>
       </li>
       <li>
-        <a href="#contact" class="nav-link">{t.nav.contact}</a>
+        <a href={`${homeUrl}#contact`} class="nav-link">{t.nav.contact}</a>
       </li>
     </ul>
 
@@ -80,7 +99,7 @@ const langUrl = lang === 'es' ? '/en/' : '/';
   }
 
   /* El estado activo lo marca la semántica, no una clase visual */
-  .nav-link[aria-current='true'] {
+  .nav-link[aria-current='page'] {
     background: var(--color-brand-dark);
     color: var(--color-brand-light);
   }
