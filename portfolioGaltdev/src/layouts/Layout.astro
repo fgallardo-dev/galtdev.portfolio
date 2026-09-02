@@ -1,22 +1,28 @@
 ---
+import { getImage } from 'astro:assets';
 import '../styles/global.css';
 import Footer from '../components/Footer.astro';
+import logo from '../assets/logo.png';
 
 interface Props {
   title: string;
   description: string;
   lang?: 'es' | 'en';
+  /** Ruta (relativa al sitio) de la imagen para redes; por defecto, el logo optimizado */
   ogImage?: string;
   /** Ruta de esta página en cada idioma, para los alternates hreflang */
   alternateEsPath?: string;
   alternateEnPath?: string;
 }
 
+// El logo original pesa 1,2 MB: para redes se sirve en JPG a 1200px (no tiene transparencia)
+const defaultOgImage = await getImage({ src: logo, width: 1200, format: 'jpg' });
+
 const {
   title,
   description,
   lang = 'es',
-  ogImage = '/logo.png',
+  ogImage = defaultOgImage.src,
   alternateEsPath = '/',
   alternateEnPath = '/en/',
 } = Astro.props;

@@ -1,6 +1,8 @@
 ---
+import { Image } from 'astro:assets';
 import { useTranslations } from '../i18n/translations';
 import type { Lang } from '../i18n/translations';
+import kobi from '../assets/kobi.png';
 
 interface Props {
   lang: Lang;
@@ -8,6 +10,9 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = useTranslations(lang);
+
+// Se calcula en cada build: el año nunca queda viejo tras un deploy
+const year = new Date().getFullYear();
 ---
 
 <section class="relative text-center pt-4 pb-12 px-6">
@@ -17,7 +22,7 @@ const t = useTranslations(lang);
     {t.hero.role}
   </p>
   <p class="absolute right-6 top-2 font-mono text-xs tracking-widest text-brand-mid">
-    {t.hero.year}
+    /{year}/
   </p>
 
   <!-- Cubos flotantes: lista de tecnologías, decorativa para lectores de pantalla -->
@@ -51,9 +56,14 @@ const t = useTranslations(lang);
 
   <!-- Escenario: koala + pedestal escalan juntos dentro de este contenedor -->
   <div class="stage flex flex-col items-center mx-auto">
-    <img
-      src="/kobi.png"
-      alt="Kobi el koala"
+    <!-- Imagen principal (LCP): carga inmediata y anchos acordes al 68% del escenario -->
+    <Image
+      src={kobi}
+      alt={t.hero.koalaAlt}
+      widths={[420, 680, 1000, 1360]}
+      sizes="(min-width: 1087px) 680px, 62.5vw"
+      loading="eager"
+      fetchpriority="high"
       class="koala"
     />
     <p class="pedestal flex items-center justify-center font-mono font-bold text-xs tracking-widest text-brand-dark">
@@ -118,6 +128,7 @@ const t = useTranslations(lang);
 
   .koala {
     width: 68%;
+    height: auto;
     filter: drop-shadow(0 10px 14px rgba(92, 63, 33, 0.13));
     margin-bottom: -4%;
   }
@@ -135,5 +146,13 @@ const t = useTranslations(lang);
     .cube--ts { left: 4%; top: 9%; }
     .cube--py { right: 5%; top: 7%; }
     .cube--js { display: none; }
+  }
+
+  /* Respeto por quien pide menos movimiento en su sistema */
+  @media (prefers-reduced-motion: reduce) {
+    .star,
+    .cube {
+      animation: none;
+    }
   }
 </style>

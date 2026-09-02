@@ -1,6 +1,8 @@
 ---
+import { Image } from 'astro:assets';
 import { useTranslations } from '../i18n/translations';
 import type { Lang } from '../i18n/translations';
+import logo from '../assets/logo.png';
 
 interface Props {
   lang: Lang;
@@ -25,9 +27,13 @@ const year = new Date().getFullYear();
 <footer class="footer px-6 pt-12 pb-8 text-center">
 
   <a href={homeUrl} class="inline-flex items-center justify-center gap-2 no-underline">
-    <img
-      src="/logo.png"
+    <!-- Se renderiza a 36px: se piden 1x y 2x, no el PNG original de 1254px -->
+    <Image
+      src={logo}
       alt=""
+      width={36}
+      height={36}
+      densities={[1, 2]}
       class="w-9 h-9 rounded-full bg-white p-0.5 object-contain"
     />
     <span class="font-mono font-bold text-brand-light">
