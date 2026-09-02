@@ -18,7 +18,7 @@ export const translations = {
       role: '/Desarrollo full stack/',
       tagline: '/ desarrollo digital con propósito /',
       welcome: '/ BIENVENIDO /',
-      year: '/2026/',
+      koalaAlt: 'Kobi el koala',
     },
     techs: {
       title: 'Tecnologías',
@@ -27,6 +27,15 @@ export const translations = {
       title: 'Proyectos',
       allTech: 'Todas las tecnologías',
       empty: 'Sin proyectos con esa tecnología.',
+      comingSoon: 'Los proyectos están en camino. Vuelve pronto.',
+      kind: {
+        personal: 'Proyecto personal',
+        practice: 'Prácticas',
+      },
+      back: 'Volver a proyectos',
+      readmeCta: 'Ver README en GitHub',
+      repoCta: 'Ver repositorio',
+      liveCta: 'Ver proyecto',
     },
     about: {
       title: 'Sobre mí',
@@ -165,7 +174,7 @@ export const translations = {
       role: '/Full-stack development/',
       tagline: '/ digital development with purpose /',
       welcome: '/ WELCOME /',
-      year: '/2026/',
+      koalaAlt: 'Kobi the koala',
     },
     techs: {
       title: 'Technologies',
@@ -174,6 +183,15 @@ export const translations = {
       title: 'Projects',
       allTech: 'All technologies',
       empty: 'No projects with that technology.',
+      comingSoon: 'Projects are on their way. Check back soon.',
+      kind: {
+        personal: 'Personal project',
+        practice: 'Internship',
+      },
+      back: 'Back to projects',
+      readmeCta: 'View README on GitHub',
+      repoCta: 'View repository',
+      liveCta: 'View project',
     },
     about: {
       title: 'About me',

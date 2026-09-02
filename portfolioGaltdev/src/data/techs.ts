@@ -9,3 +9,7 @@ export const TECHS = [
 ] as const;
 
 export type TechId = (typeof TECHS)[number]['id'];
+
+/** Etiqueta visible de una tecnología; si no existe, devuelve el id tal cual */
+export const techLabel = (id: TechId): string =>
+  TECHS.find((tech) => tech.id === id)?.label ?? id;

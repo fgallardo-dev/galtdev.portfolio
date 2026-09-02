@@ -1,9 +1,9 @@
 ---
+import { Image } from 'astro:assets';
 import { useTranslations } from '../i18n/translations';
 import type { Lang } from '../i18n/translations';
-import { PROJECTS } from '../data/projects';
-import { TECHS } from '../data/techs';
-import type { TechId } from '../data/techs';
+import { TECHS, techLabel } from '../data/techs';
+import { getPublishedProjects, projectSlug, projectUrl } from '../lib/projects';
 
 interface Props {
   lang: Lang;
@@ -12,8 +12,15 @@ interface Props {
 const { lang } = Astro.props;
 const t = useTranslations(lang);
 
-const techLabel = (id: TechId) =>
-  TECHS.find((tech) => tech.id === id)?.label ?? id;
+// Solo entradas del idioma actual y sin `draft`; ya vienen ordenadas por `order`.
+// Sin proyectos publicados no hay grid ni filtro: solo el mensaje `comingSoon`.
+const projects = await getPublishedProjects(lang);
+const hasProjects = projects.length > 0;
+
+// Anchos de la imagen en la grid: 1 columna en móvil, 2 en tablet, 3 en escritorio (máx. 1080px)
+const CARD_WIDTHS = [360, 540, 720, 1080];
+const CARD_SIZES =
+  '(min-width: 1128px) 347px, (min-width: 928px) 33vw, (min-width: 628px) 50vw, 100vw';
 ---
 
 <section id="projects" class="projects-section px-6 py-16">
@@ -24,45 +31,88 @@ const techLabel = (id: TechId) =>
       {t.projects.title}
     </h2>
 
-    <select id="tech-filter" class="filter font-mono text-xs" aria-label={t.techs.title}>
-      <option value="all">{t.projects.allTech}</option>
-      {TECHS.map((tech) => (
-        <option value={tech.id}>{tech.label}</option>
-      ))}
-    </select>
+    {hasProjects && (
+      <select id="tech-filter" class="filter font-mono text-xs" aria-label={t.techs.title}>
+        <option value="all">{t.projects.allTech}</option>
+        {TECHS.map((tech) => (
+          <option value={tech.id}>{tech.label}</option>
+        ))}
+      </select>
+    )}
   </header>
 
-  <!-- Grid de proyectos: una card por proyecto, columnas según el ancho disponible -->
-  <ul class="projects-grid mx-auto">
-    {PROJECTS.map((project) => (
-      <li data-techs={project.techs.join(' ')}>
-        <article class="card" style={`--card-accent: ${project.accent}`}>
-          <span class="card-chip" aria-hidden="true"></span>
-          <h3 class="font-sans font-bold text-lg text-brand-dark">
-            {project.name}
-          </h3>
-          <p class="text-sm text-brand-mid">
-            {project.description[lang]}
-          </p>
-          <ul class="flex flex-wrap gap-1.5 mt-auto">
-            {project.techs.map((techId) => (
-              <li class="tag font-mono text-xs">{techLabel(techId)}</li>
-            ))}
-          </ul>
-        </article>
-      </li>
-    ))}
-  </ul>
+  {hasProjects ? (
+    <>
+      <!-- Grid de proyectos: una card por proyecto, columnas según el ancho disponible -->
+      <ul class="projects-grid mx-auto">
+        {projects.map((project) => {
+          const { title, summary, techs, accent, cover, coverAlt, hover } = project.data;
+          const href = projectUrl(lang, projectSlug(project));
 
-  <!-- Estado vacío: se anuncia también a lectores de pantalla -->
-  <p
-    id="projects-empty"
-    class="projects-empty mx-auto font-mono text-sm text-brand-mid text-center"
-    aria-live="polite"
-    hidden
-  >
-    {t.projects.empty}
-  </p>
+          return (
+            <li data-techs={techs.join(' ')}>
+              <article class="card" style={`--project-accent: ${accent}`}>
+
+                <!-- Portada + imagen de hover apiladas: el swap es solo opacidad -->
+                <div class="card-media">
+                  <Image
+                    src={cover}
+                    alt={coverAlt ?? title}
+                    widths={CARD_WIDTHS}
+                    sizes={CARD_SIZES}
+                    loading="lazy"
+                    class="card-img card-img--cover"
+                  />
+                  {hover && (
+                    <Image
+                      src={hover}
+                      alt=""
+                      widths={CARD_WIDTHS}
+                      sizes={CARD_SIZES}
+                      loading="lazy"
+                      class="card-img card-img--hover"
+                      aria-hidden="true"
+                    />
+                  )}
+                </div>
+
+                <div class="card-body">
+                  <span class="card-chip" aria-hidden="true"></span>
+                  <h3 class="font-sans font-bold text-lg text-brand-dark">
+                    <!-- El enlace se extiende a toda la card por CSS; su nombre accesible es solo el título -->
+                    <a href={href} class="card-link">{title}</a>
+                  </h3>
+                  <p class="text-sm text-brand-mid">
+                    {summary}
+                  </p>
+                  <ul class="flex flex-wrap gap-1.5 mt-auto">
+                    {techs.map((techId) => (
+                      <li class="tag font-mono text-xs">{techLabel(techId)}</li>
+                    ))}
+                  </ul>
+                </div>
+
+              </article>
+            </li>
+          );
+        })}
+      </ul>
+
+      <!-- Estado vacío del filtro: se anuncia también a lectores de pantalla -->
+      <p
+        id="projects-empty"
+        class="projects-empty mx-auto font-mono text-sm text-brand-mid text-center"
+        aria-live="polite"
+        hidden
+      >
+        {t.projects.empty}
+      </p>
+    </>
+  ) : (
+    <p class="projects-empty mx-auto font-mono text-sm text-brand-mid text-center">
+      {t.projects.comingSoon}
+    </p>
+  )}
 
 </section>
 
@@ -129,11 +179,11 @@ const techLabel = (id: TechId) =>
   }
 
   .card {
+    position: relative;
     height: 100%;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding: 24px;
+    overflow: hidden;
     border-radius: 22px;
     background: rgba(255, 255, 255, 0.8);
     border: 1px solid rgba(92, 63, 33, 0.08);
@@ -146,19 +196,81 @@ const techLabel = (id: TechId) =>
     box-shadow: 0 16px 32px rgba(92, 63, 33, 0.16);
   }
 
-  /* La marca de color de cada proyecto llega por --card-accent */
+  /* El anillo de foco se dibuja alrededor de toda la card, no solo del título */
+  .card:has(.card-link:focus-visible) {
+    outline: 3px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  /* Portada con proporción fija (16:10): las imágenes se recortan, nunca deforman */
+  .card-media {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    background: var(--color-brand-pale);
+  }
+
+  .card-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* La imagen de hover vive encima de la portada, invisible hasta el hover o el foco */
+  .card-img--hover {
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .card:hover .card-img--hover,
+  .card:focus-within .card-img--hover {
+    opacity: 1;
+  }
+
+  .card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px 24px 24px;
+  }
+
+  /* La marca de color de cada proyecto llega por --project-accent (también la usa .tag global) */
   .card-chip {
     width: 34px;
     height: 5px;
     border-radius: 999px;
-    background: var(--card-accent);
+    background: var(--project-accent);
   }
 
-  .tag {
-    padding: 3px 10px;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--card-accent) 14%, transparent);
-    color: var(--color-brand-dark);
+  .card-link {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* Área de click extendida: el pseudo-elemento cubre toda la card */
+  .card-link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 22px;
+  }
+
+  .card-link:focus-visible {
+    outline: none;
+  }
+
+  /* Respeto por quien pide menos movimiento: el swap sigue funcionando, pero al instante */
+  @media (prefers-reduced-motion: reduce) {
+    .card,
+    .card-img--hover {
+      transition: none;
+    }
+
+    .card:hover {
+      transform: none;
+    }
   }
 </style>
 

@@ -1,0 +1,285 @@
+---
+import { Image } from 'astro:assets';
+import { render } from 'astro:content';
+import { useTranslations } from '../i18n/translations';
+import type { Lang } from '../i18n/translations';
+import { techLabel } from '../data/techs';
+import type { ProjectEntry } from '../lib/projects';
+
+interface Props {
+  lang: Lang;
+  entry: ProjectEntry;
+}
+
+const { lang, entry } = Astro.props;
+const t = useTranslations(lang);
+
+const { title, summary, kind, techs, accent, cover, coverAlt, repoUrl, url } = entry.data;
+const { Content } = await render(entry);
+
+const backUrl = lang === 'es' ? '/#projects' : '/en/#projects';
+
+// Personal: el README del repo es la documentación. Prácticas: el repo es opcional
+const readmeUrl = kind === 'personal' ? repoUrl : undefined;
+const repoLinkUrl = kind === 'practice' ? repoUrl : undefined;
+
+// Anchos de la portada: ocupa todo `.project-inner` (max-width: 820px) y, por debajo,
+// el viewport menos el padding lateral (px-6 = 24px por lado → 48px). 868 = 820 + 48.
+const HERO_WIDTHS = [640, 960, 1280, 1640];
+const HERO_SIZES = '(min-width: 868px) 820px, calc(100vw - 48px)';
+---
+
+<article class="project px-6 py-10" style={`--project-accent: ${accent}`}>
+  <div class="project-inner mx-auto">
+
+    <a href={backUrl} class="back font-mono text-xs tracking-widest text-accent">
+      <span aria-hidden="true">←</span> {t.projects.back}
+    </a>
+
+    <!-- Portada a ancho completo del artículo -->
+    <figure class="hero-media">
+      <Image
+        src={cover}
+        alt={coverAlt ?? title}
+        widths={HERO_WIDTHS}
+        sizes={HERO_SIZES}
+        loading="eager"
+        fetchpriority="high"
+        class="hero-img"
+      />
+    </figure>
+
+    <header class="mt-8">
+      <p class="kind-chip">{t.projects.kind[kind]}</p>
+
+      <h1 class="font-display text-4xl md:text-5xl font-medium mt-4">
+        {title}
+      </h1>
+
+      <p class="intro mt-4">{summary}</p>
+
+      <ul class="flex flex-wrap gap-1.5 mt-5" aria-label={t.techs.title}>
+        {techs.map((techId) => (
+          <li class="tag font-mono text-xs">{techLabel(techId)}</li>
+        ))}
+      </ul>
+
+      {(readmeUrl || repoLinkUrl || url) && (
+        <div class="ctas flex flex-wrap gap-3 mt-7">
+          {readmeUrl && (
+            <a class="cta" href={readmeUrl} target="_blank" rel="noopener noreferrer">
+              {t.projects.readmeCta} <span aria-hidden="true">↗</span>
+            </a>
+          )}
+          {repoLinkUrl && (
+            <a class="cta cta--secondary" href={repoLinkUrl} target="_blank" rel="noopener noreferrer">
+              {t.projects.repoCta} <span aria-hidden="true">↗</span>
+            </a>
+          )}
+          {url && (
+            <a class="cta cta--secondary" href={url} target="_blank" rel="noopener noreferrer">
+              {t.projects.liveCta} <span aria-hidden="true">↗</span>
+            </a>
+          )}
+        </div>
+      )}
+    </header>
+
+    <!-- Cuerpo Markdown: los estilos de prosa viven abajo, en :global -->
+    <div class="prose">
+      <Content />
+    </div>
+
+  </div>
+</article>
+
+<style>
+  .project-inner {
+    max-width: 820px;
+  }
+
+  .back {
+    display: inline-block;
+    text-decoration: none;
+  }
+
+  .back:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  /* Portada con proporción fija (16:10), mismo marco redondeado que las cards */
+  .hero-media {
+    margin: 24px 0 0;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    border-radius: 28px;
+    background: var(--color-brand-pale);
+    border: 1px solid rgba(92, 63, 33, 0.08);
+    box-shadow: 0 18px 40px rgba(92, 63, 33, 0.16);
+  }
+
+  .hero-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Tipo de proyecto: chip con el color del proyecto como punto */
+  .kind-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--project-accent) 16%, transparent);
+    color: var(--color-brand-dark);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+  }
+
+  .kind-chip::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--project-accent);
+  }
+
+  .intro {
+    font-size: clamp(18px, 2.2vw, 22px);
+    line-height: 1.5;
+    color: var(--color-brand-mid);
+  }
+
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 22px;
+    border-radius: 999px;
+    background: var(--color-brand-dark);
+    color: var(--color-brand-light);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    box-shadow: 0 8px 20px rgba(92, 63, 33, 0.25);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(92, 63, 33, 0.3);
+  }
+
+  .cta--secondary {
+    background: transparent;
+    color: var(--color-brand-dark);
+    border: 1.5px solid rgba(92, 63, 33, 0.22);
+    box-shadow: none;
+  }
+
+  .cta--secondary:hover {
+    background: rgba(92, 63, 33, 0.08);
+    box-shadow: none;
+  }
+
+  /* Prosa: el Markdown llega sin clases, así que los estilos se aplican por elemento */
+  .prose {
+    margin-top: 40px;
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--color-brand-dark);
+  }
+
+  .prose :global(h2) {
+    margin: 2em 0 0.6em;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(26px, 3vw, 32px);
+    line-height: 1.2;
+  }
+
+  .prose :global(h3) {
+    margin: 1.6em 0 0.5em;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 19px;
+  }
+
+  .prose :global(p) {
+    margin: 0 0 1.1em;
+  }
+
+  .prose :global(ul),
+  .prose :global(ol) {
+    margin: 0 0 1.1em;
+    padding-left: 1.4em;
+  }
+
+  .prose :global(li) {
+    margin-bottom: 0.4em;
+  }
+
+  .prose :global(a) {
+    color: var(--color-accent-dark);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .prose :global(code) {
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: rgba(92, 63, 33, 0.08);
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+  }
+
+  .prose :global(pre) {
+    margin: 0 0 1.4em;
+    padding: 18px 20px;
+    border-radius: 18px;
+    overflow-x: auto;
+    font-size: 14px;
+  }
+
+  .prose :global(pre code) {
+    padding: 0;
+    background: transparent;
+  }
+
+  .prose :global(blockquote) {
+    margin: 1.4em 0;
+    padding: 4px 0 4px 20px;
+    border-left: 3px solid var(--project-accent);
+    color: var(--color-brand-mid);
+    font-style: italic;
+  }
+
+  .prose :global(img) {
+    max-width: 100%;
+    height: auto;
+    border-radius: 18px;
+  }
+
+  .prose :global(hr) {
+    margin: 2em 0;
+    border: 0;
+    border-top: 1px solid rgba(92, 63, 33, 0.15);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cta {
+      transition: none;
+    }
+
+    .cta:hover {
+      transform: none;
+    }
+  }
+</style>

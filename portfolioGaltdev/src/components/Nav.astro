@@ -1,38 +1,68 @@
 ---
+import { Image } from 'astro:assets';
 import { useTranslations } from '../i18n/translations';
 import type { Lang } from '../i18n/translations';
+import { projectUrl } from '../lib/projects';
+import logo from '../assets/logo.png';
 
 interface Props {
   lang: Lang;
+  /** Destino del switch de idioma cuando la página lo sabe mejor que la ruta */
+  langUrl?: string;
 }
 
 const { lang } = Astro.props;
 const t = useTranslations(lang);
 
 const path = Astro.url.pathname;
+const otherLang: Lang = lang === 'es' ? 'en' : 'es';
 
-const homeUrl = lang === 'es' ? '/' : '/en/';
-const aboutUrl = lang === 'es' ? '/sobre-mi/' : '/en/about/';
-const contactUrl = lang === 'es' ? '/contacto/' : '/en/contact/';
+// Tabla de rutas estáticas en ambos idiomas: para añadir una página basta con una fila aquí
+type LocalizedRoute = Record<Lang, string>;
+const ROUTES = {
+  home: { es: '/', en: '/en/' },
+  about: { es: '/sobre-mi/', en: '/en/about/' },
+  contact: { es: '/contacto/', en: '/en/contact/' },
+} satisfies Record<string, LocalizedRoute>;
 
-const isAbout = ['/sobre-mi', '/sobre-mi/', '/en/about', '/en/about/'].includes(path);
-const isContact = ['/contacto', '/contacto/', '/en/contact', '/en/contact/'].includes(path);
-const isHome = path === '/' || path === '/en/' || path === '/en';
+// Una ruta está activa si la URL actual es su versión es o en, con o sin barra final
+const isActive = (route: LocalizedRoute) =>
+  Object.values(route).some((url) => path === url || path === url.replace(/\/$/, ''));
+
+const homeUrl = ROUTES.home[lang];
+const aboutUrl = ROUTES.about[lang];
+const contactUrl = ROUTES.contact[lang];
+
+const isHome = isActive(ROUTES.home);
+const isAbout = isActive(ROUTES.about);
+const isContact = isActive(ROUTES.contact);
+
+// Páginas de proyecto: /proyectos/<slug>/ en español, /en/projects/<slug>/ en inglés
+const projectSlug = path.match(/^\/(?:proyectos|en\/projects)\/([^/]+)\/?$/)?.[1];
 
 // El switch de idioma lleva a la MISMA página en el otro idioma
-const langUrl =
-  lang === 'es'
-    ? isAbout ? '/en/about/' : isContact ? '/en/contact/' : '/en/'
-    : isAbout ? '/sobre-mi/' : isContact ? '/contacto/' : '/';
+const activeRoute = Object.values(ROUTES).find(isActive);
+const counterpartUrl = activeRoute
+  ? activeRoute[otherLang]
+  : projectSlug
+    ? projectUrl(otherLang, projectSlug)
+    : ROUTES.home[otherLang];
+
+const langUrl = Astro.props.langUrl ?? counterpartUrl;
 ---
 
 <nav class="relative flex items-center justify-between px-6 py-4" aria-label={t.nav.ariaLabel}>
 
   <!-- Logo + marca: vuelve al inicio del idioma actual -->
   <a href={homeUrl} class="flex items-center gap-3 no-underline">
-    <img
-      src="/logo.png"
+    <!-- Se renderiza a 44px: se piden 1x y 2x, no el PNG original de 1254px -->
+    <Image
+      src={logo}
       alt="galtyou.dev logo"
+      width={44}
+      height={44}
+      densities={[1, 2]}
+      loading="eager"
       class="w-11 h-11 rounded-full bg-white p-0.5 object-contain"
       style="box-shadow: 0 1px 4px rgba(92,63,33,.12);"
     />
@@ -174,20 +204,32 @@ const langUrl =
 </style>
 
 <script>
-  // Primer script de cliente: abre y cierra el menú móvil.
+  // Abre y cierra el menú móvil.
   // El único estado vive en aria-expanded; el CSS reacciona a él.
   const toggle = document.querySelector<HTMLButtonElement>('.nav-toggle');
+  const nav = toggle?.closest('nav');
   const links = document.querySelectorAll<HTMLAnchorElement>('.nav-menu a');
 
+  const isOpen = () => toggle?.getAttribute('aria-expanded') === 'true';
+  const close = () => toggle?.setAttribute('aria-expanded', 'false');
+
   toggle?.addEventListener('click', () => {
-    const isOpen = toggle.getAttribute('aria-expanded') === 'true';
-    toggle.setAttribute('aria-expanded', String(!isOpen));
+    toggle.setAttribute('aria-expanded', String(!isOpen()));
   });
 
   // Al elegir un destino, el panel se cierra solo
-  links.forEach((link) => {
-    link.addEventListener('click', () => {
-      toggle?.setAttribute('aria-expanded', 'false');
-    });
+  links.forEach((link) => link.addEventListener('click', close));
+
+  // Escape cierra el panel y devuelve el foco al botón que lo abrió
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape' || !isOpen()) return;
+    close();
+    toggle?.focus();
+  });
+
+  // Un click fuera de la barra también cierra el panel
+  document.addEventListener('click', (event) => {
+    if (!isOpen() || nav?.contains(event.target as Node)) return;
+    close();
   });
 </script>

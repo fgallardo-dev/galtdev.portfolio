@@ -1,0 +1,33 @@
+---
+// Página gemela en inglés: src/pages/en/projects/[slug].astro
+import Layout from '../../layouts/Layout.astro';
+import Nav from '../../components/Nav.astro';
+import ProjectDetail from '../../components/ProjectDetail.astro';
+import { getProjectPageMeta, getProjectPaths } from '../../lib/project-page';
+import type { ProjectEntry } from '../../lib/projects';
+
+export async function getStaticPaths() {
+  return getProjectPaths('es');
+}
+
+interface Props {
+  entry: ProjectEntry;
+}
+
+const { entry } = Astro.props;
+const meta = await getProjectPageMeta('es', entry);
+---
+
+<Layout
+  title={meta.title}
+  description={meta.description}
+  lang="es"
+  ogImage={meta.ogImage}
+  alternateEsPath={meta.alternateEsPath}
+  alternateEnPath={meta.alternateEnPath}
+>
+  <Nav lang="es" langUrl={meta.langUrl} />
+  <main>
+    <ProjectDetail lang="es" entry={entry} />
+  </main>
+</Layout>
