@@ -10,7 +10,7 @@ summary: Una o dos líneas que expliquen qué hace el proyecto y para quién est
 # Ids válidos: los de src/data/techs.ts
 techs: [typescript, react]
 accent: '#D9722C'
-# Imágenes en src/assets/projects/<slug>/; tamaño recomendado 1200x750 (16:10)
+# Imágenes en src/assets/projects/<slug>/; tamaño recomendado 1640x1025 (16:10)
 cover: ../../../assets/projects/example/cover.png
 coverAlt: Pantalla principal del proyecto de ejemplo
 hover: ../../../assets/projects/example/hover.png

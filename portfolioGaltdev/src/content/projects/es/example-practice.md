@@ -10,7 +10,7 @@ summary: Qué hice durante las prácticas y en qué equipo, en una o dos líneas
 # Ids válidos: los de src/data/techs.ts
 techs: [python, sql]
 accent: '#4A90A4'
-# Imágenes en src/assets/projects/<slug>/; tamaño recomendado 1200x750 (16:10)
+# Imágenes en src/assets/projects/<slug>/; tamaño recomendado 1640x1025 (16:10)
 cover: ../../../assets/projects/example/cover.png
 coverAlt: Captura del sistema en el que trabajé durante las prácticas
 hover: ../../../assets/projects/example/hover.png

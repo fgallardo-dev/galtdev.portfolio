@@ -62,8 +62,8 @@ portfolioGaltdev/
 ## Adding a project
 
 1. Copy a template from `src/content/projects/es/` and `src/content/projects/en/` — same file name in both folders (it becomes the URL slug).
-2. Put the images in `src/assets/projects/<slug>/` (recommended 1200x750, 16:10).
-3. Fill in the frontmatter and the body in each language; the comments in the template explain every field.
+2. Put the images in `src/assets/projects/<slug>/`. Use **1640x1025 (16:10)**: the detail hero requests widths up to 1640px and `astro:assets` never upscales, so a smaller source is served soft on high-density screens.
+3. Fill in the frontmatter and the body in each language; the comments in the template explain every field. `cover` is the informative image (it carries the alt text and shows on mobile); `hover` is decorative and hidden from assistive tech, so keep the product shot as the cover.
 4. Set `draft: false` in both files. The build fails if a published project is missing in one language.
 
 ## Getting started
@@ -87,7 +87,7 @@ npm run dev      # → http://localhost:4321
 - [x] Projects grid with technology filter
 - [x] About & contact pages
 - [x] Project detail pages (content collection, dynamic routes, sitemap & robots)
-- [ ] Real project content (templates are ready, waiting for the real projects)
+- [ ] Real project content (DalaIA published; more projects pending)
 - [ ] Lighthouse ≈100 across the board · deploy to **galtyou.dev**
 
 ---

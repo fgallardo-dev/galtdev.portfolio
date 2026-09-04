@@ -10,7 +10,7 @@ import { PROJECT_SLUG_FORMAT, PROJECT_SLUG_PATTERN } from './lib/project-slug';
  *
  * - El nombre del archivo es el slug de la URL y debe ser idéntico en es/ y en/.
  * - Imágenes en src/assets/projects/<slug>/cover.png y hover.png.
- *   Tamaño recomendado: 1200x750 px (proporción 16:10). Se recortan con
+ *   Tamaño recomendado: 1640x1025 px (proporción 16:10). Se recortan con
  *   object-fit: cover, así que conviene respetar la proporción; el peso y los
  *   formatos los optimiza astro:assets en el build.
  * - `draft: true` deja el proyecto fuera de la lista y sin página de detalle.

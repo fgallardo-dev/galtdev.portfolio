@@ -10,7 +10,7 @@ summary: What I did during the internship and on which team, in one or two lines
 # Valid ids: the ones in src/data/techs.ts
 techs: [python, sql]
 accent: '#4A90A4'
-# Images live in src/assets/projects/<slug>/; recommended size 1200x750 (16:10)
+# Images live in src/assets/projects/<slug>/; recommended size 1640x1025 (16:10)
 cover: ../../../assets/projects/example/cover.png
 coverAlt: Screenshot of the system I worked on during the internship
 hover: ../../../assets/projects/example/hover.png

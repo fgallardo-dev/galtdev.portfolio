@@ -10,7 +10,7 @@ summary: One or two lines explaining what the project does and who it is for.
 # Valid ids: the ones in src/data/techs.ts
 techs: [typescript, react]
 accent: '#D9722C'
-# Images live in src/assets/projects/<slug>/; recommended size 1200x750 (16:10)
+# Images live in src/assets/projects/<slug>/; recommended size 1640x1025 (16:10)
 cover: ../../../assets/projects/example/cover.png
 coverAlt: Main screen of the example project
 hover: ../../../assets/projects/example/hover.png
